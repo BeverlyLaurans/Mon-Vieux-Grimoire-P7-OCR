@@ -5,7 +5,7 @@ const app = express();
 
 const booksRoutes = require('./routes/booksRoutes');
 const usersRoutes = require('./routes/usersRoutes');
-// const path = require('path');
+const path = require('path');
 
 mongoose.connect('mongodb+srv://beverly:$Superpwd***@monvieuxgrimoirep7.hztg3q6.mongodb.net/?retryWrites=true&w=majority',
   { useNewUrlParser: true,
@@ -22,7 +22,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/books', booksRoutes);
 app.use('/api/auth', usersRoutes);
 
