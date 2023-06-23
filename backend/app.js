@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 // const rateLimit = require('express-rate-limit');
 const config = require('./config/config');
@@ -25,6 +27,9 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
+
+app.use(helmet());
+app.use(mongoSanitize());
 
 // // Limite de requêtes
 // const limiter = rateLimit({
