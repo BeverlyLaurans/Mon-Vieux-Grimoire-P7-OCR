@@ -1,13 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const config = require('./config/config');
+
 const app = express();
 
 const booksRoutes = require('./routes/booksRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const path = require('path');
 
-mongoose.connect('mongodb+srv://beverly:$Superpwd***@monvieuxgrimoirep7.hztg3q6.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${config.dbUser}:${config.dbPassword}@${config.dbHost}/?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -15,6 +17,7 @@ mongoose.connect('mongodb+srv://beverly:$Superpwd***@monvieuxgrimoirep7.hztg3q6.
 
 app.use(express.json());
 
+// Gestion CORS et méthodes
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -22,6 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Chemin vers le répertoire pour les fichiers
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/books', booksRoutes);
 app.use('/api/auth', usersRoutes);
