@@ -1,9 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const helmet = require('helmet');
+const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit');
 const config = require('./config/config');
 
 const app = express();
@@ -20,6 +20,12 @@ mongoose.connect(`mongodb+srv://${config.dbUser}:${config.dbPassword}@${config.d
 
 app.use(express.json());
 
+app.use(helmet({crossOriginResourcePolicy: false}));
+// app.use(helmet({
+//   contentSecurityPolicy: false,
+//   crossOriginEmbedderPolicy: false,
+// }));
+
 // CORS
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -28,19 +34,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(helmet());
-// app.use(helmet({crossOriginEmbedderPolicy: false,}));
-
 app.use(mongoSanitize());
 
-// Limite de requêtes
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 100,
-  message: 'Trop de requêtes effectuées. Veuillez réessayer plus tard.',
-});
+// // Limite de requêtes
+// const limiter = rateLimit({
+//   windowMs: 60 * 1000,
+//   max: 100,
+//   message: 'Trop de requêtes effectuées. Veuillez réessayer plus tard.',
+// });
 
-app.use(limiter);
+// app.use(limiter);
 
 // Chemin vers le répertoire pour les fichiers
 app.use('/images', express.static(path.join(__dirname, 'images')));
