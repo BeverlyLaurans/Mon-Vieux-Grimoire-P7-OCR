@@ -20,11 +20,9 @@ mongoose.connect(`mongodb+srv://${config.dbUser}:${config.dbPassword}@${config.d
 
 app.use(express.json());
 
-app.use(helmet({crossOriginResourcePolicy: false}));
-// app.use(helmet({
-//   contentSecurityPolicy: false,
-//   crossOriginEmbedderPolicy: false,
-// }));
+
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({policy:'cross-origin'}));
 
 // CORS
 app.use((req, res, next) => {
