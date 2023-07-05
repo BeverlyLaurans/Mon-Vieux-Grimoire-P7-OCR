@@ -63,38 +63,41 @@ exports.createBook = (req, res, next) => {
 };
 
 exports.createRating = (req, res, next) => {  
-    Book.findOne({_id: req.params.id})
+    Book.findOne({ _id: req.params.id })
     .then(book => {
-        // Récupération du userId du user connecté
-        const currentUserId = req.auth.userId;
-        // Note déjà existante si le tableau ratings contient déjà cet userId 
-        const existingRating = book.ratings.find(rating => rating.userId === currentUserId);
+      // Récupération du userId du user connecté
+      const currentUserId = req.auth.userId;
+      // Note déjà existante si le tableau ratings contient déjà cet userId 
+      const existingRating = book.ratings.find(rating => rating.userId === currentUserId);
 
-        // Vérification d'une note déjà existante par le même user
-        if (existingRating) {
-            return res.status(400).json({ error: 'Note déjà ajoutée auparavant.' });
-        } else {
-            // Envoi de la note et du userId dans le tableau ratings
-            book.ratings.push({
-            userId : req.auth.userId,
-            grade : req.body.rating
-            });
-        }
-        // Calcul d'une note moyenne à partir du tableau ratings
-        const totalRatings = book.ratings.length;
-        const sumRatings = book.ratings.reduce((sum, rating) => sum + rating.grade, 0);
-        const averageRating = Math.round(sumRatings / totalRatings);
-        book.averageRating = averageRating;
-        
-        // Mise à jour de la note dans la bdd
-        book.save()
-        .then(() => { 
-            res.status(200).json(book, {message: 'Note ajoutée !'});
+      // Vérification d'une note déjà existante par le même user
+      if (existingRating) {
+        return res.status(400).json({ error: 'Note déjà ajoutée auparavant.' });
+      } else {
+        // Envoi de la note et du userId dans le tableau ratings
+        book.ratings.push({
+          userId: req.auth.userId,
+          grade: req.body.rating
+        });
+      }
+      // Calcul d'une note moyenne à partir du tableau ratings
+      const totalRatings = book.ratings.length;
+      const sumRatings = book.ratings.reduce((sum, rating) => sum + rating.grade, 0);
+      const averageRating = Math.round(sumRatings / totalRatings);
+      book.averageRating = averageRating;
+
+      // Mise à jour de la note dans la bdd
+      book.save()
+        .then(() => {
+          // Renvoi du livre mis à jour dans la réponse
+          res.status(200).json(book);
         })
-        .catch(error => { res.status(400).json( { error });})
+        .catch(error => {
+          res.status(400).json({ error });
+        });
     })
     .catch(error => {
-        res.status(400).json({ error });
+      res.status(400).json({ error });
     });
 };
 
